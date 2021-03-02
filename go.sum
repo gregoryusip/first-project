@@ -1,3 +1,5 @@
+github.com/bitwurx/jrpc2 v0.0.0-20200508153510-d8310ad1baf0 h1:iGCRBObJCgF88G2LsGb8fjwkX7Eawu38vQFNznShXzE=
+github.com/bitwurx/jrpc2 v0.0.0-20200508153510-d8310ad1baf0/go.mod h1:K64+nDVvge4TqX4W97W+bmeicRpmllWtqDA5g92KfTk=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/labstack/echo v3.3.10+incompatible h1:pGRcYk231ExFAyoAjAfD85kQzRJCRI8bbnE7CX5OEgg=

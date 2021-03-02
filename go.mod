@@ -3,6 +3,7 @@ module github.com/gregoryusip/first-project
 go 1.13
 
 require (
+	github.com/bitwurx/jrpc2 v0.0.0-20200508153510-d8310ad1baf0
 	github.com/labstack/echo/v4 v4.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
