@@ -1,128 +1,56 @@
 package main
 
 import (
-	"log"
-	"net"
-	"net/http"
-	"net/rpc"
+	"encoding/json"
+
+	"github.com/bitwurx/jrpc2"
 )
 
-type Item struct {
-	Name  string
-	Price int
+type Product struct {
+	Price    int `json:price`
+	Quantity int `json:quantity`
+	Name     int `json:name`
 }
 
-type API int
-
-var database []Item
-
-func (a *API) GetDB(name string, reply *[]Item) error {
-	*reply = database
-
+func (p *Product) FromPositional(params []interface{}) error {
+	p.Price = int(params[0].(float64))
+	p.Quantity = int(params[1].(float64))
+	p.Name = int(params[2].(float64))
 	return nil
 }
 
-func (a *API) GetByName(name string, reply *Item) error {
-	var getItem Item
-
-	for _, val := range database {
-		if val.Name == name {
-			getItem = val
-		}
+func TotalProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
+	p := new(Product)
+	if err := jrpc2.ParseParams(params, p); err != nil {
+		return nil, err
 	}
+	return p.Price * p.Quantity, nil
+}
 
-	*reply = getItem
+type AddV2Params struct {
+	Args []float64 `json:args`
+}
 
+func (p *AddV2Params) FromPositional(params []interface{}) error {
+	p.Args = params[0].([]float64)
 	return nil
 }
 
-func (a *API) AddItem(item Item, reply *Item) error {
-	database = append(database, item)
-	*reply = item
-
-	return nil
-}
-
-func (a *API) EditItem(edit Item, reply *Item) error {
-	var changed Item
-
-	for idx, val := range database {
-		if val.Name == edit.Name {
-			database[idx] = Item{edit.Name, edit.Price}
-			changed = edit
-		}
+func AddV2(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
+	p := new(AddV2Params)
+	if err := jrpc2.ParseParams(params, p); err != nil {
+		return nil, err
 	}
-	*reply = changed
-
-	return nil
-}
-
-func (a *API) DeleteItem(item Item, reply *Item) error {
-	var del Item
-
-	for idx, val := range database {
-		if val.Name == item.Name && val.Price == item.Price {
-			database = append(database[:idx], database[idx+1:]...)
-			del = item
-			break
-		}
-	}
-	*reply = del
-
-	return nil
+	return p.Args[0] + p.Args[1], nil
 }
 
 func main() {
-	// Hello world, the web server
-
-	// helloHandler := func(w http.ResponseWriter, req *http.Request) {
-	// 	io.WriteString(w, "Hello, world!\n")
-	// }
-
-	// http.HandleFunc("/hello", helloHandler)
-	// log.Println("Listing for requests at http://localhost:8000/hello")
-	// log.Fatal(http.ListenAndServe(":8000", nil))
-
-	var api = new(API)
-	err := rpc.Register(api)
-
-	if err != nil {
-		log.Fatal("error registering API", err)
-	}
-
-	rpc.HandleHTTP()
-
-	listener, err := net.Listen("tcp", ":4040")
-
-	if err != nil {
-		log.Fatal("Listener Error", err)
-	}
-
-	log.Printf("serving rpc on port %d", 4040)
-	err = http.Serve(listener, nil)
-	if err != nil {
-		log.Fatal("Error serving: ", err)
-	}
-
-	// fmt.Println("Initial Database: ", database)
-
-	// a := Item{"Baju", 90000}
-	// b := Item{"Celana", 50000}
-	// c := Item{"Kemeja", 140000}
-
-	// AddItem(a)
-	// AddItem(b)
-	// AddItem(c)
-
-	// fmt.Println("Second Database: ", database)
-
-	// DeleteItem(b)
-	// fmt.Println("Third Database: ", database)
-
-	// EditItem("Baju", Item{"T-shirt", 70000})
-	// fmt.Println("Fourth Database: ", database)
-
-	// x := GetByName("T-shirt")
-	// y := GetByName("Kemeja")
-	// fmt.Println(x, y)
+	v1 := jrpc2.NewMuxHandler()
+	v1.Register("add", jrpc2.Method{Method: TotalProduct})
+	v2 := jrpc2.NewMuxHandler()
+	v2.Register("add", jrpc2.Method{Method: AddV2})
+	s := jrpc2.NewMuxServer(":8080", nil)
+	s.AddHandler("/rpc/v1", v1)
+	s.AddHandler("/rpc/v2", v2)
+	s.Start()
 }

@@ -34,7 +34,8 @@ func main() {
 
 	client.Call("API.EditItem", Item{"Celana", 40000}, &reply)
 	client.Call("API.DeleteItem", c, &reply)
-	client.Call("API.GetDB", "", &reply)
+
+	client.Call("API.GetDB", "", &db)
 	fmt.Println("Database: ", db)
 
 	client.Call("API.GetByName", "Baju", &reply)
