@@ -17,6 +17,7 @@ func (p *Product) FromPositional(params []interface{}) error {
 	p.Quantity = int(params[1].(float64))
 	p.Name = int(params[2].(float64))
 	return nil
+
 }
 
 func TotalProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
