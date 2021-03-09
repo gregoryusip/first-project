@@ -1,9 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 
 	"github.com/bitwurx/jrpc2"
+	"github.com/gregoryusip/first-project/middleware"
+	_ "github.com/lib/pq"
 )
 
 type Product struct {
@@ -17,7 +20,6 @@ func (p *Product) FromPositional(params []interface{}) error {
 	p.Quantity = int(params[1].(float64))
 	p.Name = int(params[2].(float64))
 	return nil
-
 }
 
 func TotalProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
@@ -46,8 +48,30 @@ func AddV2(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
 }
 
 func main() {
+	// DATABASE CONNECTION
+	connection := "user=postgres dbname=connect-db password=mysecret host=localhost sslmode=disable"
+	db, err := sql.Open("postgres", connection)
+
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	// OBJECT
+	products := new(middleware.Products)
+
+	// HANDLER
 	v1 := jrpc2.NewMuxHandler()
-	v1.Register("add", jrpc2.Method{Method: TotalProduct})
+	// v1.Register("add", jrpc2.Method{Method: TotalProduct})
+	v1.Register("makeProduct", jrpc2.Method{
+		Url:    "github.com/gregoryusip/first-project/middleware",
+		Method: products.MakeProduct,
+	})
 	v2 := jrpc2.NewMuxHandler()
 	v2.Register("add", jrpc2.Method{Method: AddV2})
 	s := jrpc2.NewMuxServer(":8080", nil)
