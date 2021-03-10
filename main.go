@@ -2,50 +2,11 @@ package main
 
 import (
 	"database/sql"
-	"encoding/json"
 
 	"github.com/bitwurx/jrpc2"
 	"github.com/gregoryusip/first-project/controller"
 	_ "github.com/lib/pq"
 )
-
-type Product struct {
-	Price    int `json:price`
-	Quantity int `json:quantity`
-	Name     int `json:name`
-}
-
-func (p *Product) FromPositional(params []interface{}) error {
-	p.Price = int(params[0].(float64))
-	p.Quantity = int(params[1].(float64))
-	p.Name = int(params[2].(float64))
-	return nil
-}
-
-func TotalProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
-	p := new(Product)
-	if err := jrpc2.ParseParams(params, p); err != nil {
-		return nil, err
-	}
-	return p.Price * p.Quantity, nil
-}
-
-type AddV2Params struct {
-	Args []float64 `json:args`
-}
-
-func (p *AddV2Params) FromPositional(params []interface{}) error {
-	p.Args = params[0].([]float64)
-	return nil
-}
-
-func AddV2(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
-	p := new(AddV2Params)
-	if err := jrpc2.ParseParams(params, p); err != nil {
-		return nil, err
-	}
-	return p.Args[0] + p.Args[1], nil
-}
 
 func main() {
 	// DATABASE CONNECTION
