@@ -1,77 +1,103 @@
-// https://medium.com/@OmisNomis/creating-an-rpc-server-in-go-3a94797ab833 & https://medium.com/rungo/building-rpc-remote-procedure-call-network-in-go-5bfebe90f7e9
+// // https://medium.com/@OmisNomis/creating-an-rpc-server-in-go-3a94797ab833 & https://medium.com/rungo/building-rpc-remote-procedure-call-network-in-go-5bfebe90f7e9
 
-package middleware
+// package middleware
 
-type Product struct {
-	Name     string `json:"name"`
-	Price    int    `json:"price"`
-	Quantity int    `json:"quantity"`
-}
+// import (
+// 	"encoding/json"
 
-type EditProduct struct {
-	Name        string `json:"name"`
-	NewName     string `json:"newname"`
-	NewPrice    int    `json:"price"`
-	NewQuantity int    `json:"quantity"`
-}
+// 	"github.com/bitwurx/jrpc2"
 
-type Products int
+// 	"github.com/gregoryusip/first-project/models"
+// )
 
-var productSlice []Product
+// // type Product struct {
+// // 	Name     *string `json:"name"`
+// // 	Price    *int64  `json:"price"`
+// // 	Quantity *int64  `json:"quantity"`
+// // }
 
-func (p *Products) GetProduct(name string, reply *Product) error {
-	var found Product
+// // type EditProduct struct {
+// // 	Name        string `json:"name"`
+// // 	NewName     string `json:"newname"`
+// // 	NewPrice    int    `json:"price"`
+// // 	NewQuantity int    `json:"quantity"`
+// // }
 
-	for _, v := range productSlice {
-		if v.Name == name {
-			found = v
-		}
-	}
+// // var product = new(models.Product)
 
-	*reply = found
+// // type Products int
 
-	return nil
-}
+// var productSlice []models.Product
 
-func (p *Products) MakeProduct(product Product, reply *Product) error {
+// func (p *models.Products) GetProduct(name string, reply *models.Product) error {
+// 	var found models.Product
 
-	productSlice = append(productSlice, product)
+// 	for _, v := range productSlice {
+// 		if v.Name == name {
+// 			found = v
+// 		}
+// 	}
 
-	*reply = product
+// 	*reply = found
 
-	return nil
-}
+// 	return nil
+// }
 
-func (p *Products) EditProduct(product EditProduct, reply *Product) error {
+// func (p *models.Product) FromPositional(params []interface{}) error {
 
-	var editedProduct Product
+// 	// name := string(params[0].(string))
+// 	name := params[0].(string)
+// 	price := params[1].(int64)
+// 	quantity := params[2].(int64)
 
-	for i, v := range productSlice {
-		if v.Name == product.Name {
-			productSlice[i] = Product{product.NewName, product.NewPrice, product.NewQuantity}
-			editedProduct = Product{product.NewName, product.NewPrice, product.NewQuantity}
+// 	p.Name = &name
+// 	p.Price = &price
+// 	p.Quantity = &quantity
 
-		}
-	}
+// 	return nil
+// }
 
-	*reply = editedProduct
+// func CreateProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
 
-	return nil
-}
+// 	p := new(models.Product)
 
-func (p *Products) DeleteProduct(product Product, reply *Product) error {
+// 	if err := jrpc2.ParseParams(params, p); err != nil {
+// 		return nil, err
+// 	}
 
-	var deletedProduct Product
+// 	return nil
+// }
 
-	for i, v := range productSlice {
-		if v.Name == product.Name && v.Price == product.Price && v.Quantity == product.Quantity {
-			productSlice = append(productSlice[:i], productSlice[i+1:]...)
-			deletedProduct = product
-			break
-		}
-	}
+// func (p *Products) EditProduct(product EditProduct, reply *Product) error {
 
-	*reply = deletedProduct
+// 	var editedProduct Product
 
-	return nil
-}
+// 	for i, v := range productSlice {
+// 		if v.Name == product.Name {
+// 			productSlice[i] = Product{product.NewName, product.NewPrice, product.NewQuantity}
+// 			editedProduct = Product{product.NewName, product.NewPrice, product.NewQuantity}
+
+// 		}
+// 	}
+
+// 	*reply = editedProduct
+
+// 	return nil
+// }
+
+// func (p *Products) DeleteProduct(product Product, reply *Product) error {
+
+// 	var deletedProduct Product
+
+// 	for i, v := range productSlice {
+// 		if v.Name == product.Name && v.Price == product.Price && v.Quantity == product.Quantity {
+// 			productSlice = append(productSlice[:i], productSlice[i+1:]...)
+// 			deletedProduct = product
+// 			break
+// 		}
+// 	}
+
+// 	*reply = deletedProduct
+
+// 	return nil
+// }

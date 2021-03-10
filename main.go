@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/bitwurx/jrpc2"
-	"github.com/gregoryusip/first-project/middleware"
+	"github.com/gregoryusip/first-project/controller"
 	_ "github.com/lib/pq"
 )
 
@@ -63,15 +63,12 @@ func main() {
 	}
 
 	// OBJECT
-	products := new(middleware.Products)
+	// products := new(models.Products)
 
 	// HANDLER
 	v1 := jrpc2.NewMuxHandler()
 	// v1.Register("add", jrpc2.Method{Method: TotalProduct})
-	v1.Register("makeProduct", jrpc2.Method{
-		Url:    "github.com/gregoryusip/first-project/middleware",
-		Method: products.MakeProduct,
-	})
+	v1.Register("addProduct", jrpc2.Method{Method: controller.AddProduct})
 	v2 := jrpc2.NewMuxHandler()
 	v2.Register("add", jrpc2.Method{Method: AddV2})
 	s := jrpc2.NewMuxServer(":8080", nil)
