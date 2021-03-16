@@ -24,7 +24,7 @@ type ProductControllerModel interface {
 }
 
 type Dependencies struct {
-	ProductORM *sql.DB
+	ProductORM models.ProductModel.Products
 }
 
 func NewProductController(deps Dependencies) ProductControllerModel {
@@ -34,7 +34,7 @@ func NewProductController(deps Dependencies) ProductControllerModel {
 }
 
 type ProductRepository struct {
-	ProductORM *sql.DB
+	ProductORM models.ProductModel.Products
 }
 
 func (p *Products) FromPositional(params []interface{}) error {
