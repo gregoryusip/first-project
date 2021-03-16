@@ -28,13 +28,13 @@ type Dependencies struct {
 }
 
 func NewProductController(deps Dependencies) ProductControllerModel {
-	return ProductRepository{
-		Db: deps.Db,
+	return &ProductRepository{
+		ProductORM: deps.Db,
 	}
 }
 
 type ProductRepository struct {
-	Db *sql.DB
+	ProductORM *sql.DB
 }
 
 func (p *Products) FromPositional(params []interface{}) error {
@@ -64,6 +64,7 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 		return nil, err
 	}
 
+	// KENDALA: passing data ke models.ProductModel.CreateProduct(...)
 	insertID := models.ProductModel.CreateProduct(produk)
 
 	res := response{
