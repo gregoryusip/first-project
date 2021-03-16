@@ -39,10 +39,12 @@ type ProductRepository struct {
 
 func (p *Products) FromPositional(params []interface{}) error {
 
-	name := string(params[0].(string))
-	price := int(params[1].(int))
-	quantity := int(params[2].(int))
+	// id := int(params[0].(int))
+	name := string(params[1].(string))
+	price := int(params[2].(int))
+	quantity := int(params[3].(int))
 
+	// p.ID = id
 	p.Name = name
 	p.Price = price
 	p.Quantity = quantity
@@ -99,12 +101,6 @@ func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, 
 
 	return res, nil
 }
-
-// func Welcome(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
-// 	msg := "Success"
-
-// 	return msg, nil
-// }
 
 type response struct {
 	ID      int    `json:"id,omitempty"`
