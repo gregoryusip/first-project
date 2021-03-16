@@ -3,18 +3,91 @@
 package models
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
-	"github.com/gregoryusip/first-project/config"
 	_ "github.com/lib/pq"
 )
 
-type Product struct {
-	ID       int64  `json:"id"`
-	Name     string `json:"name"`
-	Price    int64  `json:"price"`
-	Quantity int64  `json:"quantity"`
+type Products struct {
+	ID       int    `json:"id" pg:"id,pk"`
+	Name     string `json:"name" pg:"name"`
+	Price    int    `json:"price" pg:"price"`
+	Quantity int    `json:"quantity" pg:"quantity"`
+}
+
+func NewProducts(Name string, Price int, Quantity int) Products {
+	return Products{0, Name, Price, Quantity}
+}
+
+type ProductModel interface {
+	ReadProduct() ([]Products, error)
+	CreateProduct(produk Products) error
+}
+
+type Dependencies struct {
+	Db *sql.DB
+}
+
+func NewProductModel(deps Dependencies) ProductModel {
+	return &ProductRepository{
+		Db: deps.Db,
+	}
+}
+
+// func NewProductModel(Db *sql.DB) ProductModel {
+// 	return ProductRepository{Db: Db}
+// }
+
+type ProductRepository struct {
+	Db *sql.DB
+}
+
+func (p *ProductRepository) CreateProduct(produk Products) error {
+	// p.Db.Query("INSERT INTO first-project")
+	sqlStatement := `INSERT INTO product (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
+
+	var id int
+
+	err := p.Db.QueryRow(sqlStatement, produk.Name, produk.Price, produk.Quantity).Scan(&id)
+
+	if err != nil {
+		log.Fatalf("Can't execute the Query. %v", err)
+	}
+
+	fmt.Println("Insert data single record %v", id)
+
+	return nil
+}
+
+func (p *ProductRepository) ReadProduct() ([]Products, error) {
+
+	var products []Products
+
+	sqlStatement := `SELECT * FROM product`
+
+	rows, err := p.Db.Query(sqlStatement)
+
+	if err != nil {
+		log.Fatalf("Can't execute the query. %v", err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var product Products
+
+		err := rows.Scan(&product.ID, &product.Name, &product.Price, &product.Quantity)
+
+		if err != nil {
+			log.Fatalf("Can't take the data. %v", err)
+		}
+
+		products = append(products, product)
+	}
+
+	return products, err
 }
 
 type EditProduct struct {
@@ -22,50 +95,4 @@ type EditProduct struct {
 	NewName     string `json:"newname"`
 	NewPrice    int    `json:"price"`
 	NewQuantity int    `json:"quantity"`
-}
-
-// type Products int
-
-func CreateProduct(product Product) int64 {
-	db := config.CreateConnection()
-
-	defer db.Close()
-
-	sqlStatement := `INSERT INTO product (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
-
-	var id int64
-
-	err := db.QueryRow(sqlStatement, product.Name, product.Price, product.Quantity).Scan(&id)
-
-	if err != nil {
-		log.Fatalf("Can't exec the Query. %v", err)
-	}
-
-	fmt.Println("Insert data single record %v", id)
-
-	return id
-}
-
-func UpdateProduct(id int64, product Product) int64 {
-	db := config.CreateConnection()
-
-	defer db.Close()
-
-	sqlStatement := `UPDATE product SET name=$2, price=$1000, quantity=$5 WHERE id=$1`
-
-	res, err := db.Exec(sqlStatement, id, product.Name, product.Price, product.Quantity)
-
-	if err != nil {
-		log.Fatalf("Can't exec the query. %v", err)
-	}
-
-	rowsAffected, err := res.RowsAffected()
-
-	if err != nil {
-		log.Fatalf("Error when checking data rows to update. %v", err)
-	}
-
-	fmt.Printf("Total rows/record to update %v\n", rowsAffected)
-
-	return rowsAffected
 }
