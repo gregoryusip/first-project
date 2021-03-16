@@ -24,12 +24,12 @@ type ProductControllerModel interface {
 }
 
 type Dependencies struct {
-	Db *sql.DB
+	ProductORM *sql.DB
 }
 
 func NewProductController(deps Dependencies) ProductControllerModel {
 	return &ProductRepository{
-		ProductORM: deps.Db,
+		ProductORM: deps.ProductORM,
 	}
 }
 

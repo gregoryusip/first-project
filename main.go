@@ -18,7 +18,7 @@ func main() {
 	})
 
 	productController := models.NewProductController(controller.Dependencies{
-		Db: db,
+		ProductORM: productORM,
 	})
 
 	server := jrpc2.NewMuxHandler()
