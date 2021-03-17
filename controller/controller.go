@@ -68,7 +68,6 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 	insertID := p.ProductORM.CreateProduct(models.Products(*produk))
 
 	res := response{
-		// ID: insertID masih salah
 		ID:      insertID,
 		Message: "Product is inserted",
 	}
@@ -78,7 +77,7 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 
 func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
 
-	// ERROR panggil method
+	// ERROR panggil method jika menggunakan models.ProductModel.ReadProduct()
 	// produk, err := models.ProductModel.ReadProduct()
 	produk, err := p.ProductORM.ReadProduct()
 
@@ -107,7 +106,7 @@ func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, 
 }
 
 type response struct {
-	ID      int    `json:"id,omitempty"`
+	ID      error  `json:"id,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 
