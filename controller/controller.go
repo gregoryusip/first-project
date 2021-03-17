@@ -3,7 +3,6 @@
 package controller
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log"
 
@@ -24,7 +23,7 @@ type ProductControllerModel interface {
 }
 
 type Dependencies struct {
-	ProductORM models.ProductModel.Products
+	ProductORM models.ProductModel
 }
 
 func NewProductController(deps Dependencies) ProductControllerModel {
@@ -34,7 +33,7 @@ func NewProductController(deps Dependencies) ProductControllerModel {
 }
 
 type ProductRepository struct {
-	ProductORM models.ProductModel.Products
+	ProductORM models.ProductModel
 }
 
 func (p *Products) FromPositional(params []interface{}) error {
@@ -65,9 +64,11 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 	}
 
 	// KENDALA: passing data ke models.ProductModel.CreateProduct(...)
-	insertID := models.ProductModel.CreateProduct(produk)
+	// insertID := models.ProductModel.CreateProduct(produk)
+	insertID := p.ProductORM.CreateProduct(models.Products(*produk))
 
 	res := response{
+		// ID: insertID masih salah
 		ID:      insertID,
 		Message: "Product is inserted",
 	}
@@ -77,7 +78,9 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 
 func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
 
-	p, err := models.ProductModel.ReadProduct()
+	// ERROR panggil method
+	// produk, err := models.ProductModel.ReadProduct()
+	produk, err := p.ProductORM.ReadProduct()
 
 	// if err := jrpc2.ParseParams(params, p); err != nil {
 	// 	return nil, err
@@ -90,14 +93,14 @@ func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, 
 	var response Response
 	response.Status = 1
 	response.Message = "Success"
-	response.Data = p
+	response.Data = produk
 
 	status := 1
 
 	res := Response{
 		Status:  status,
 		Message: "Success",
-		Data:    p,
+		Data:    produk,
 	}
 
 	return res, nil

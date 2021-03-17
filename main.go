@@ -17,7 +17,7 @@ func main() {
 		Db: db,
 	})
 
-	productController := models.NewProductController(controller.Dependencies{
+	productController := controller.NewProductController(controller.Dependencies{
 		ProductORM: productORM,
 	})
 
