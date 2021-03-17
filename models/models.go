@@ -46,7 +46,7 @@ type ProductRepository struct {
 
 func (p *ProductRepository) CreateProduct(produk Products) error {
 	// p.Db.Query("INSERT INTO product")
-	sqlStatement := `INSERT INTO first_project_db (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
+	sqlStatement := `INSERT INTO product (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
 
 	var id int
 
@@ -65,7 +65,7 @@ func (p *ProductRepository) ReadProduct() ([]Products, error) {
 
 	var products []Products
 
-	sqlStatement := `SELECT * FROM first_project_db`
+	sqlStatement := `SELECT * FROM product`
 
 	rows, err := p.Db.Query(sqlStatement)
 
