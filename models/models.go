@@ -46,7 +46,7 @@ type ProductRepository struct {
 
 func (p *ProductRepository) CreateProduct(produk Products) int {
 	// p.Db.Query("INSERT INTO product")
-	sqlStatement := `INSERT INTO products (name, price, quantity) VALUES ($1, $2, $3, $4) RETURNING id`
+	sqlStatement := `INSERT INTO products (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
 
 	var id int
 
