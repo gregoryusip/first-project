@@ -58,6 +58,7 @@ func (p *Products) FromPositional(params []interface{}) error {
 func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
 
 	produk := new(Products)
+	// var produk Products
 
 	if err := jrpc2.ParseParams(params, produk); err != nil {
 		return nil, err
@@ -106,7 +107,7 @@ func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, 
 }
 
 type response struct {
-	ID      error  `json:"id,omitempty"`
+	ID      int    `json:"id,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 

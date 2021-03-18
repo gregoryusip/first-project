@@ -23,7 +23,7 @@ func NewProducts(Name string, Price int, Quantity int) Products {
 
 type ProductModel interface {
 	ReadProduct() ([]Products, error)
-	CreateProduct(produk Products) error
+	CreateProduct(produk Products) int
 }
 
 type Dependencies struct {
@@ -44,9 +44,9 @@ type ProductRepository struct {
 	Db *sql.DB
 }
 
-func (p *ProductRepository) CreateProduct(produk Products) error {
+func (p *ProductRepository) CreateProduct(produk Products) int {
 	// p.Db.Query("INSERT INTO product")
-	sqlStatement := `INSERT INTO product (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
+	sqlStatement := `INSERT INTO products (name, price, quantity) VALUES ($1, $2, $3, $4) RETURNING id`
 
 	var id int
 
@@ -58,14 +58,14 @@ func (p *ProductRepository) CreateProduct(produk Products) error {
 
 	fmt.Println("Insert data single record %v", id)
 
-	return nil
+	return id
 }
 
 func (p *ProductRepository) ReadProduct() ([]Products, error) {
 
 	var products []Products
 
-	sqlStatement := `SELECT * FROM product`
+	sqlStatement := `SELECT * FROM products`
 
 	rows, err := p.Db.Query(sqlStatement)
 
