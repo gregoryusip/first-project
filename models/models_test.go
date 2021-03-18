@@ -24,18 +24,6 @@ func TestCreateProduct(t *testing.T) {
 		{"Playstation 5", 8000000, 50},
 	}
 
-	// var testModels = struct {
-	// 	ID       int
-	// 	Name     string
-	// 	Price    int
-	// 	Quantity int
-	// }{
-	// 	ID:       10,
-	// 	Name:     "Playstation 5",
-	// 	Price:    8000000,
-	// 	Quantity: 50,
-	// }
-
 	// testingModel := Products{10, "Playstation 5", 8000000, 50}
 	testingModel := new(Products)
 	testingModel.ID = 10

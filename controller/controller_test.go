@@ -17,10 +17,16 @@ func TestAddProduct(t *testing.T) {
 		{"Playstation 5", 8000000, 50},
 	}
 
+	testingModel := new(Products)
+	testingModel.ID = 10
+	testingModel.Name = "Model"
+	testingModel.Price = 80000
+	testingModel.Quantity = 10
+
 	for _, testController := range tests {
 		testName := fmt.Sprintf("%s, %d, %d", testController.Name, testController.Price, testController.Quantity)
 		t.Run(testName, func(t *testing.T) {
-			ans := ProductControllerModel.AddProduct(tests)
+			ans := ProductRepository.ProductORM.CreateProduct(testingModel)
 		})
 	}
 }
