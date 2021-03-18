@@ -7,6 +7,7 @@ import (
 
 func TestCreateProduct(t *testing.T) {
 	type Produk struct {
+		ID       int
 		Name     string
 		Price    int
 		Quantity int
@@ -35,12 +36,17 @@ func TestCreateProduct(t *testing.T) {
 	// 	Quantity: 50,
 	// }
 
-	testModelss := Produk{"Playstation 5", 8000000, 50}
+	// testingModel := Products{10, "Playstation 5", 8000000, 50}
+	testingModel := new(Products)
+	testingModel.ID = 10
+	testingModel.Name = "Model"
+	testingModel.Price = 80000
+	testingModel.Quantity = 10
 
 	for _, testModels := range tests {
 		testName := fmt.Sprintf("%s, %d, %d", testModels.Name, testModels.Price, testModels.Quantity)
 		t.Run(testName, func(t *testing.T) {
-			ans := ProductModel.CreateProduct(testModelss)
+			ans := ProductModel.CreateProduct(testingModel)
 
 			if ans < 0 {
 				t.Errorf("Some error is happened")
