@@ -78,8 +78,6 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 
 func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
 
-	// ERROR panggil method jika menggunakan models.ProductModel.ReadProduct()
-	// produk, err := models.ProductModel.ReadProduct()
 	produk, err := p.ProductORM.ReadProduct()
 
 	// if err := jrpc2.ParseParams(params, p); err != nil {
