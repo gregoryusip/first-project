@@ -6,12 +6,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/joho/godotenv"
 )
 
 func CreateConnection() *sql.DB {
-	err := godotenv.Load(".env")
+
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	environmentPath := filepath.Join(dir, ".env")
+	err = godotenv.Load(environmentPath)
 
 	if err != nil {
 		log.Fatalf("Error loading .env file")

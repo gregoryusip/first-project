@@ -24,20 +24,106 @@ func TestCreateProduct(t *testing.T) {
 		Quantity: 34,
 	}
 
-	err := productORM.CreateProduct(produk)
-	if err < 0 {
-		fmt.Println("Something is happened")
+	// err := productORM.CreateProduct(produk)
+	// if err < 0 {
+	// 	fmt.Println("Something is happened")
+	// }
+
+	// fmt.Println(produk)
+
+	testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
+	t.Run(testName, func(t *testing.T) {
+		err := productORM.CreateProduct(produk)
+
+		if err < 0 {
+			t.Errorf("Some error is happened")
+		}
+
+	})
+}
+
+func TestReadProduct(t *testing.T) {
+	db := config.CreateConnection()
+
+	productORM := NewProductModel(Dependencies{
+		Db: db,
+	})
+
+	// productController := controller.ProductControllerModel(controller.Dependencies{
+	// 	ProductORM: productORM,
+	// })
+
+	produk := Products{
+		Name:     "Baju",
+		Price:    10000,
+		Quantity: 20,
 	}
 
-	fmt.Println(produk)
+	testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
+	t.Run(testName, func(t *testing.T) {
+		prod, err := productORM.ReadProduct()
 
-	// testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
-	// t.Run(testName, func(t *testing.T) {
-	// 	err := productORM.CreateProduct(produk)
+		if err != nil {
+			t.Errorf("Some error is happened")
+		}
 
-	// 	if err < 0 {
-	// 		t.Errorf("Some error is happened")
-	// 	}
+		fmt.Sprintln(prod)
 
+	})
+}
+
+func TestUpdateProduct(t *testing.T) {
+	db := config.CreateConnection()
+
+	productORM := NewProductModel(Dependencies{
+		Db: db,
+	})
+
+	// productController := controller.ProductControllerModel(controller.Dependencies{
+	// 	ProductORM: productORM,
 	// })
+
+	produk := Products{
+		Name:     "Baju",
+		Price:    10000,
+		Quantity: 20,
+	}
+
+	testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
+	t.Run(testName, func(t *testing.T) {
+		err := productORM.UpdateProduct(produk.Name, produk)
+
+		if err < 0 {
+			t.Errorf("Some error is happened")
+		}
+
+	})
+}
+
+func TestDeleteProduct(t *testing.T) {
+	db := config.CreateConnection()
+
+	productORM := NewProductModel(Dependencies{
+		Db: db,
+	})
+
+	// productController := controller.ProductControllerModel(controller.Dependencies{
+	// 	ProductORM: productORM,
+	// })
+
+	produk := Products{
+		Name:     "Baju",
+		Price:    10000,
+		Quantity: 20,
+	}
+
+	testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
+	t.Run(testName, func(t *testing.T) {
+		err := productORM.DeleteProduct(produk.Name)
+
+		if err < 0 {
+			t.Errorf("Some error is happened")
+		}
+
+	})
 }
