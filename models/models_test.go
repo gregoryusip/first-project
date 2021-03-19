@@ -3,51 +3,43 @@ package models
 import (
 	"fmt"
 	"testing"
+
+	"github.com/gregoryusip/first-project/config"
 )
 
+type Produk struct {
+	ID       int
+	Name     string
+	Price    int
+	Quantity int
+}
+
 func TestCreateProduct(t *testing.T) {
-	type Produk struct {
-		ID       int
-		Name     string
-		Price    int
-		Quantity int
-	}
+	db := config.CreateConnection()
 
-	// var tests = []struct {
-	// 	Name     string
-	// 	Price    int
-	// 	Quantity int
-	// }{
-	// 	{"Bola Basket", 250000, 400},
-	// 	{"Meja Makan", 450000, 100},
-	// 	{"TV LED", 1500000, 250},
-	// 	{"Playstation 5", 8000000, 50},
-	// }
-
-	// testingModel := Products{10, "Playstation 5", 8000000, 50}
-	testingModel := new(Products)
-	testingModel.ID = 10
-	testingModel.Name = "Model"
-	testingModel.Price = 80000
-	testingModel.Quantity = 10
-
-	testName := fmt.Sprintf("%s, %d, %d", testingModel.Name, testingModel.Price, testingModel.Quantity)
-	t.Run(testName, func(t *testing.T) {
-		ans := ProductModel.CreateProduct(testingModel)
-
-		if ans < 0 {
-			t.Errorf("Some error is happened")
-		}
+	productORM := NewProductModel(Dependencies{
+		Db: db,
 	})
 
-	// for _, testModels := range tests {
-	// 	testName := fmt.Sprintf("%s, %d, %d", testModels.Name, testModels.Price, testModels.Quantity)
-	// 	t.Run(testName, func(t *testing.T) {
-	// 		ans := ProductModel.CreateProduct(testingModel)
+	// productController := controller.ProductControllerModel(controller.Dependencies{
+	// 	ProductORM: productORM,
+	// })
 
-	// 		if ans < 0 {
-	// 			t.Errorf("Some error is happened")
-	// 		}
-	// 	})
-	// }
+	produk := Products{
+		Name:     "New Product",
+		Price:    15000000,
+		Quantity: 34,
+	}
+
+	// err := productORM.CreateProduct(produk)
+
+	testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
+	t.Run(testName, func(t *testing.T) {
+		err := productORM.CreateProduct(produk)
+
+		if err < 0 {
+			t.Errorf("Some error is happened")
+		}
+
+	})
 }
