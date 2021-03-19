@@ -24,10 +24,14 @@ func main() {
 	server := jrpc2.NewMuxHandler()
 	server.Register("product.CreateProduct", jrpc2.Method{Method: productController.AddProduct})
 	server.Register("product.ReadProduct", jrpc2.Method{Method: productController.ReadedProduct})
+	server.Register("product.UpdateProduct", jrpc2.Method{Method: productController.UpdatedProduct})
+	server.Register("product.DeleteProduct", jrpc2.Method{Method: productController.DeletedProduct})
 
 	s := jrpc2.NewMuxServer(":8080", nil)
 	s.AddHandler("/rpc/create", server)
 	s.AddHandler("/rpc/read", server)
+	s.AddHandler("/rpc/update", server)
+	s.AddHandler("/rpc/delete", server)
 
 	s.Start()
 }

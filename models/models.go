@@ -4,6 +4,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
@@ -23,6 +24,8 @@ func NewProducts(Name string, Price int, Quantity int) Products {
 type ProductModel interface {
 	ReadProduct() ([]Products, error)
 	CreateProduct(produk Products) int
+	UpdateProduct(name string, produk Products) int64
+	DeleteProduct(name string) int64
 }
 
 type Dependencies struct {
@@ -87,6 +90,48 @@ func (p *ProductRepository) ReadProduct() ([]Products, error) {
 	}
 
 	return products, err
+}
+
+func (p *ProductRepository) UpdateProduct(name string, produk Products) int64 {
+
+	sqlStatement := `UPDATE products SET name=$1, price=$2, quantity=$3 WHERE name=$1`
+
+	res, err := p.Db.Exec(sqlStatement, name, produk.Price, produk.Quantity)
+
+	if err != nil {
+		log.Fatalf("Can't execute the query. %v", err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+
+	if err != nil {
+		log.Fatalf("Error when checking data rows to update. %v", err)
+	}
+
+	fmt.Printf("Total rows/record to update %v\n", rowsAffected)
+
+	return rowsAffected
+}
+
+func (p *ProductRepository) DeleteProduct(name string) int64 {
+
+	sqlStatement := `DELETE FROM products WHERE name=$1`
+
+	res, err := p.Db.Exec(sqlStatement, name)
+
+	if err != nil {
+		log.Fatalf("Can't execute the query. %v", err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+
+	if err != nil {
+		log.Fatalf("Can't find the data. %v", err)
+	}
+
+	fmt.Printf("Total rows/record that deleted. %v", rowsAffected)
+
+	return rowsAffected
 }
 
 type EditProduct struct {

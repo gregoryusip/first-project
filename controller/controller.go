@@ -4,6 +4,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/bitwurx/jrpc2"
@@ -20,6 +21,8 @@ type Products struct {
 type ProductControllerModel interface {
 	AddProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject)
 	ReadedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject)
+	UpdatedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject)
+	DeletedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject)
 }
 
 type Dependencies struct {
@@ -99,6 +102,60 @@ func (p *ProductRepository) ReadedProduct(params json.RawMessage) (interface{}, 
 		Status:  status,
 		Message: "Success",
 		Data:    produk,
+	}
+
+	return res, nil
+}
+
+func (p *ProductRepository) UpdatedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
+
+	// id, err := strconv.Atoi(params["id"])
+
+	// if err != nil {
+	// 	log.Fatalf("Can't change from string to int. %v", err)
+	// }
+
+	produk := new(Products)
+
+	if err := jrpc2.ParseParams(params, produk); err != nil {
+		return nil, err
+	}
+
+	// updatedProducts := models.UpdateProduct(int64(id), p)
+	updatedProduct := p.ProductORM.UpdateProduct(produk.Name, models.Products(*produk))
+
+	msg := fmt.Sprintf("Product success to update.")
+
+	res := response{
+		ID:      int(updatedProduct),
+		Message: msg,
+	}
+
+	return res, nil
+}
+
+func (p *ProductRepository) DeletedProduct(params json.RawMessage) (interface{}, *jrpc2.ErrorObject) {
+
+	// id, err := strconv.Atoi(params["id"])
+
+	// if err != nil {
+	// 	log.Fatalf("Can't change from string to int. %v", err)
+	// }
+
+	produk := new(Products)
+
+	if err := jrpc2.ParseParams(params, produk); err != nil {
+		return nil, err
+	}
+
+	// deletedProducts := models.DeleteProduct(int64(id))
+	deletedProduct := p.ProductORM.DeleteProduct(produk.Name)
+
+	msg := fmt.Sprintf("Product success to delete.")
+
+	res := response{
+		ID:      int(deletedProduct),
+		Message: msg,
 	}
 
 	return res, nil
