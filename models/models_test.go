@@ -7,13 +7,6 @@ import (
 	"github.com/gregoryusip/first-project/config"
 )
 
-type Produk struct {
-	ID       int
-	Name     string
-	Price    int
-	Quantity int
-}
-
 func TestCreateProduct(t *testing.T) {
 	db := config.CreateConnection()
 
