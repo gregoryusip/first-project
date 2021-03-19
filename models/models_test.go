@@ -24,15 +24,20 @@ func TestCreateProduct(t *testing.T) {
 		Quantity: 34,
 	}
 
-	// err := productORM.CreateProduct(produk)
+	err := productORM.CreateProduct(produk)
+	if err < 0 {
+		fmt.Println("Something is happened")
+	}
 
-	testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
-	t.Run(testName, func(t *testing.T) {
-		err := productORM.CreateProduct(produk)
+	fmt.Println(produk)
 
-		if err < 0 {
-			t.Errorf("Some error is happened")
-		}
+	// testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
+	// t.Run(testName, func(t *testing.T) {
+	// 	err := productORM.CreateProduct(produk)
 
-	})
+	// 	if err < 0 {
+	// 		t.Errorf("Some error is happened")
+	// 	}
+
+	// })
 }
