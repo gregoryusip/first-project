@@ -4,7 +4,6 @@ package models
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
@@ -56,7 +55,7 @@ func (p *ProductRepository) CreateProduct(produk Products) int {
 		log.Fatalf("Can't execute the Query. %v", err)
 	}
 
-	fmt.Println("Insert data single record %v", id)
+	// fmt.Printf("Insert data single record %d", id)
 
 	return id
 }
