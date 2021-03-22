@@ -9,8 +9,12 @@ import (
 )
 
 type Config struct {
-	DBDriver      string `mapstructure:"DB_DRIVER"`
-	DBSource      string `mapstructure:"DB_SOURCE"`
+	DBDriver string `mapstructure:"DB_DRIVER"`
+	// DBSource      string `mapstructure:"DB_SOURCE"`
+	DBName        string `mapstructure:"DB_NAME"`
+	DBUser        string `mapstructure:"DB_USER"`
+	DBPassword    string `mapstructure:"DB_PASSWORD"`
+	DBHost        string `mapstructure:"DB_HOST"`
 	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
 }
 
@@ -27,17 +31,21 @@ func LoadConfig(path string) (config Config, err error) {
 	}
 
 	err = viper.Unmarshal(&config)
+	if err != nil {
+		log.Fatal("cannot decode into struct:", err)
+	}
 	return
 }
 
-func CreateConnection() *sql.DB {
+func CreateConnection(path string) *sql.DB {
 
-	config, err := LoadConfig(".")
+	config, err := LoadConfig(path)
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
 
-	db, err := sql.Open(config.DBDriver, config.DBSource)
+	psqlInfo := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", config.DBHost, config.DBUser, config.DBName, config.DBPassword)
+	db, err := sql.Open(config.DBDriver, psqlInfo)
 	if err != nil {
 		panic(err)
 	}

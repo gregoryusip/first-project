@@ -8,7 +8,7 @@ import (
 )
 
 func TestCreateProduct(t *testing.T) {
-	db := config.CreateConnection()
+	db := config.CreateConnection("../")
 
 	productORM := NewProductModel(Dependencies{
 		Db: db,
@@ -43,7 +43,7 @@ func TestCreateProduct(t *testing.T) {
 }
 
 func TestReadProduct(t *testing.T) {
-	db := config.CreateConnection()
+	db := config.CreateConnection("../")
 
 	productORM := NewProductModel(Dependencies{
 		Db: db,
@@ -73,7 +73,7 @@ func TestReadProduct(t *testing.T) {
 }
 
 func TestUpdateProduct(t *testing.T) {
-	db := config.CreateConnection()
+	db := config.CreateConnection("../")
 
 	productORM := NewProductModel(Dependencies{
 		Db: db,
@@ -101,7 +101,7 @@ func TestUpdateProduct(t *testing.T) {
 }
 
 func TestDeleteProduct(t *testing.T) {
-	db := config.CreateConnection()
+	db := config.CreateConnection("../")
 
 	productORM := NewProductModel(Dependencies{
 		Db: db,
