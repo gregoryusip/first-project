@@ -10,7 +10,20 @@ import (
 
 func main() {
 	// DATABASE CONNECTION
+	// db := config.CreateConnection()
 	db := config.CreateConnection()
+
+	// config, err := config.LoadConfig(".")
+	// if err != nil {
+	// 	log.Fatal("Cannot load config:", err)
+	// }
+
+	// conn, err := sql.Open(config.DBDriver, config.DBSource)
+	// if err != nil {
+	// 	log.Fatal("Cannot connect to db:", err)
+	// }
+
+	// store := db.NewStore(conn)
 
 	// SINGLETON
 	productORM := models.NewProductModel(models.Dependencies{

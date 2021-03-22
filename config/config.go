@@ -2,37 +2,47 @@ package config
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
+
+type Config struct {
+	DBDriver      string `mapstructure:"DB_DRIVER"`
+	DBSource      string `mapstructure:"DB_SOURCE"`
+	ServerAddress string `mapstructure:"SERVER_ADDRESS"`
+}
+
+func LoadConfig(path string) (config Config, err error) {
+	viper.AddConfigPath(path)
+	viper.SetConfigName("app")
+	viper.SetConfigType("env")
+
+	viper.AutomaticEnv()
+
+	err = viper.ReadInConfig()
+	if err != nil {
+		return
+	}
+
+	err = viper.Unmarshal(&config)
+	return
+}
 
 func CreateConnection() *sql.DB {
 
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	config, err := LoadConfig(".")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("cannot load config:", err)
 	}
 
-	environmentPath := filepath.Join(dir, ".env")
-	err = godotenv.Load(environmentPath)
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
-	db, err := sql.Open("postgres", os.Getenv("POSTGRES_URL"))
-
+	db, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		panic(err)
 	}
 
 	err = db.Ping()
-
 	if err != nil {
 		panic(err)
 	}
@@ -40,26 +50,4 @@ func CreateConnection() *sql.DB {
 	fmt.Println("Success to connect to DB!")
 
 	return db
-}
-
-type NullString struct {
-	sql.NullString
-}
-
-func (s NullString) MarshalJSON() ([]byte, error) {
-	if !s.Valid {
-		return []byte("null"), nil
-	}
-
-	return json.Marshal(s.String)
-}
-
-func (s *NullString) UnmarshalJSON(data []byte) error {
-	if string(data) == "null" {
-		s.String, s.Valid = "", false
-		return nil
-	}
-
-	s.String, s.Valid = string(data), true
-	return nil
 }
