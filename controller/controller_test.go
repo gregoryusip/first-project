@@ -1,15 +1,25 @@
+// https://levelup.gitconnected.com/unit-testing-using-mocking-in-go-f281122f499f
+
 package controller
 
 import (
-	"fmt"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"github.com/gregoryusip/first-project/config"
+	"github.com/gregoryusip/first-project/mocks"
 	"github.com/gregoryusip/first-project/models"
 )
 
+// type Products struct {
+// 	ID       int    `json:"id"`
+// 	Name     string `json:"name"`
+// 	Price    int    `json:"price"`
+// 	Quantity int    `json:"quantity"`
+// }
+
 func TestAddProduct(t *testing.T) {
-	db := config.CreateConnection()
+	db := config.CreateConnection("../")
 
 	productORM := models.NewProductModel(models.Dependencies{
 		Db: db,
@@ -19,19 +29,17 @@ func TestAddProduct(t *testing.T) {
 		ProductORM: productORM,
 	})
 
-	produk := Products{
-		Name:     "New Product",
-		Price:    15000000,
-		Quantity: 34,
-	}
+	controller := gomock.NewController(t)
 
-	testName := fmt.Sprintf("%s, %d, %d", produk.Name, produk.Price, produk.Quantity)
-	t.Run(testName, func(t *testing.T) {
-		err := productController.AddProduct(models.Products(*produk))
+	defer controller.Finish()
 
-		if err < 0 {
-			t.Errorf("Some error is happened")
-		}
+	MockInterface := mocks.NewMockProductControllerModel(controller)
+	// MockInterface := mocks.NewMockProductModel(controller)
 
-	})
+	var produk models.Products
+	MockInterface.EXPECT().AddProduct(produk)
+
+	// var produk Products
+	// MockInterface.EXPECT().AddProduct(produk).
+
 }
