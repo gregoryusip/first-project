@@ -7,6 +7,8 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/gregoryusip/first-project/mocks"
+	"github.com/gregoryusip/first-project/models"
+	"github.com/magiconair/properties/assert"
 )
 
 // type Products struct {
@@ -26,40 +28,28 @@ func TestAddProduct(t *testing.T) {
 	controllers := gomock.NewController(t)
 	defer controllers.Finish()
 
-	MockInterface := mocks.NewMockProductControllerModel(controllers)
+	MockInterface := mocks.NewMockProductModel(controllers)
 	// MockInterface := mocks.NewMockProductModel(controller)
 
 	// produkTest := Dependencies{
 	// 	ProductORM: MockInterface,
 	// }
 
-	produkTest := ProductRepository{ProductORM: MockInterface}
+	// produkTest := ProductRepository{ProductORM: MockInterface}
 
 	var id = 1
-	res := response{
-		ID:      id,
-		Message: "Mocking Success!",
-	}
 
-	// produk := models.Products{
-	// 	Name:     "New Product",
-	// 	Price:    15000000,
-	// 	Quantity: 34,
-	// }
-
-	produk := []byte(`
-	{
-		"name": "New Product",
-		"price": 200000,
-		"quantity": 10,
+	produk := models.Products{
+		Name:     "New Product",
+		Price:    15000000,
+		Quantity: 34,
 	}
-	`)
 
 	// MockInterface.EXPECT().AddProduct()
-	MockInterface.EXPECT().AddProduct(produk).Return(res, nil)
+	MockInterface.EXPECT().CreateProduct(produk).Return(id)
 
-	// result := ProductRepository.ProductORM.CreateProduct(models.Products(*&produk))
+	result := MockInterface.CreateProduct(produk)
 	// result := Dependencies.ProductORM.CreateProduct()
-	// assert.Equal(t, res.ID, result)
+	assert.Equal(t, id, result)
 
 }
