@@ -9,6 +9,7 @@ import (
 	"github.com/gregoryusip/first-project/config"
 	"github.com/gregoryusip/first-project/mocks"
 	"github.com/gregoryusip/first-project/models"
+	"github.com/magiconair/properties/assert"
 )
 
 // type Products struct {
@@ -18,6 +19,11 @@ import (
 // 	Quantity int    `json:"quantity"`
 // }
 
+// type response struct {
+// 	ID      int
+// 	Message string
+// }
+
 func TestAddProduct(t *testing.T) {
 	db := config.CreateConnection("../")
 
@@ -25,21 +31,40 @@ func TestAddProduct(t *testing.T) {
 		Db: db,
 	})
 
-	productController := NewProductController(Dependencies{
+	productControllers := NewProductController(Dependencies{
 		ProductORM: productORM,
 	})
 
-	controller := gomock.NewController(t)
+	if productControllers != nil {
+		return
+	}
 
-	defer controller.Finish()
+	var p *ProductRepository
 
-	MockInterface := mocks.NewMockProductControllerModel(controller)
+	controllers := gomock.NewController(t)
+
+	defer controllers.Finish()
+
+	MockInterface := mocks.NewMockProductControllerModel(controllers)
 	// MockInterface := mocks.NewMockProductModel(controller)
 
-	var produk models.Products
-	MockInterface.EXPECT().AddProduct(produk)
+	var id = 1
+	res := response{
+		ID:      id,
+		Message: "Mocking Success!",
+	}
 
-	// var produk Products
-	// MockInterface.EXPECT().AddProduct(produk).
+	produk := Products{
+		Name:     "New Product",
+		Price:    15000000,
+		Quantity: 34,
+	}
+
+	// MockInterface.EXPECT().AddProduct()
+	MockInterface.EXPECT().AddProduct(produk).Return(res, nil)
+
+	result := p.ProductORM.CreateProduct(models.Products(*&produk))
+	// result := Dependencies.ProductORM.CreateProduct()
+	assert.Equal(t, res.ID, result)
 
 }
