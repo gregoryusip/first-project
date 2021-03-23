@@ -33,7 +33,7 @@ func TestAddProduct(t *testing.T) {
 	// 	ProductORM: MockInterface,
 	// }
 
-	produkTest := &ProductRepository{ProductORM: MockInterface}
+	produkTest := ProductRepository{ProductORM: MockInterface}
 
 	var id = 1
 	res := response{
