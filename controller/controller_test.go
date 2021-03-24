@@ -14,13 +14,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// type ProductsJSON struct {
-// 	ID       int    `json:"id"`
-// 	Name     string `json:"name"`
-// 	Price    int    `json:"price"`
-// 	Quantity int    `json:"quantity"`
-// }
-
 type Expected struct {
 	ID      int
 	Message string
@@ -28,53 +21,48 @@ type Expected struct {
 
 func TestAddProduct(t *testing.T) {
 
+	// MOCK Controller
 	controllers := gomock.NewController(t)
 	defer controllers.Finish()
 
+	// MOCK INTERFACE from MODELS
 	MockInterface := mocks.NewMockProductModel(controllers)
 
-	// produkTest := ProductRepository{ProductORM: MockInterface}
-	produkTest := NewProductController(Dependencies{ProductORM: MockInterface})
+	// INJECT MOCK INTERFACE into PRODUCT CONTROLLER
+	productControllerTest := NewProductController(Dependencies{ProductORM: MockInterface})
 
 	var id = 1
-	exp := Expected{
+
+	// EXPECTATION RESULT
+	expected := Expected{
 		ID:      1,
 		Message: "Product is inserted",
 	}
 
-	produk1 := models.Products{
+	// PRODUCT TEST
+	productTest := models.Products{
 		ID:       1,
 		Name:     "New Product",
 		Price:    15000000,
 		Quantity: 34,
 	}
 
-	// produk2 := []byte(`
-	// {
-	// 	"id": 1,
-	// 	"name": "Meja Belajar",
-	// 	"price": 150000,
-	// 	"quantity": 10,
-	// }
-	// `)
-
-	// testProduct := ProductsJSON{ID: 1, Name: "New Product", Price: 1500000, Quantity: 34}
-	resultProduk, err := json.Marshal(produk1)
+	// CONVERT PRODUCT STRUCT into JSON.RawMessage
+	cvtProduct, err := json.Marshal(productTest)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	MockInterface.EXPECT().CreateProduct(produk1).Return(id)
+	// EXPECTED FUNCTION
+	MockInterface.EXPECT().CreateProduct(productTest).Return(id)
 
-	result, _ := produkTest.AddProduct(resultProduk)
-	resultExp := Expected{}
-	mapstructure.Decode(result, &resultExp)
+	// CONVERT INTERFACE into STRUCT
+	resultProductInterface, _ := productControllerTest.AddProduct(cvtProduct)
+	resultProductExpected := Expected{}
+	mapstructure.Decode(resultProductInterface, &resultProductExpected)
 
-	// fmt.Println(result)
-	// fmt.Println(resultExp)
-	// fmt.Println(exp)
-
-	assert.Equal(t, resultExp, exp)
+	// EQUAL RESULT with EXPECTED
+	assert.Equal(t, resultProductExpected, expected)
 
 }
