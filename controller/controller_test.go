@@ -11,6 +11,7 @@ import (
 	"github.com/gregoryusip/first-project/mocks"
 	"github.com/gregoryusip/first-project/models"
 	"github.com/magiconair/properties/assert"
+	"github.com/mitchellh/mapstructure"
 )
 
 // type ProductsJSON struct {
@@ -67,9 +68,13 @@ func TestAddProduct(t *testing.T) {
 	MockInterface.EXPECT().CreateProduct(produk1).Return(id)
 
 	result, _ := produkTest.AddProduct(resultProduk)
-	fmt.Println(produk1)
-	fmt.Println(result)
+	resultExp := Expected{}
+	mapstructure.Decode(result, &resultExp)
 
-	assert.Equal(t, result, exp)
+	// fmt.Println(result)
+	// fmt.Println(resultExp)
+	// fmt.Println(exp)
+
+	assert.Equal(t, resultExp, exp)
 
 }
