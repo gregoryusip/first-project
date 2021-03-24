@@ -39,7 +39,33 @@ func TestAddProduct(t *testing.T) {
 		Message: "Product is inserted",
 	}
 
+	// expected := []Expected{
+	// 	{
+	// 		ID:      1,
+	// 		Message: "Product is inserted",
+	// 	},
+	// 	{
+	// 		ID:      20,
+	// 		Message: "Product is inserted",
+	// 	},
+	// }
+
 	// PRODUCT TEST
+	// productTest := []models.Products{
+	// 	{
+	// 		ID:       1,
+	// 		Name:     "New Product",
+	// 		Price:    15000000,
+	// 		Quantity: 34,
+	// 	},
+	// 	{
+	// 		ID:       2,
+	// 		Name:     "New Product 2",
+	// 		Price:    240000,
+	// 		Quantity: 90,
+	// 	},
+	// }
+
 	productTest := models.Products{
 		ID:       1,
 		Name:     "New Product",
@@ -64,5 +90,29 @@ func TestAddProduct(t *testing.T) {
 
 	// EQUAL RESULT with EXPECTED
 	assert.Equal(t, resultProductExpected, expected)
+
+	// RETURN ERROR FOR UNIT TEST
+	expected2 := Expected{
+		ID:      20,
+		Message: "Product is inserted",
+	}
+	productTest2 := models.Products{
+		ID:       1,
+		Name:     "New Product",
+		Price:    15000000,
+		Quantity: 34,
+	}
+	cvtProduct2, err := json.Marshal(productTest2)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	MockInterface.EXPECT().CreateProduct(productTest2).Return(id)
+
+	resultProductInterface2, _ := productControllerTest.AddProduct(cvtProduct2)
+	resultProductExpected2 := Expected{}
+	mapstructure.Decode(resultProductInterface2, &resultProductExpected2)
+
+	assert.Equal(t, resultProductExpected2, expected2)
 
 }
