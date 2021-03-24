@@ -10,19 +10,20 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/gregoryusip/first-project/mocks"
 	"github.com/gregoryusip/first-project/models"
+	"github.com/magiconair/properties/assert"
 )
 
-type ProductsJSON struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Price    int    `json:"price"`
-	Quantity int    `json:"quantity"`
-}
-
-// type response struct {
-// 	ID      int
-// 	Message string
+// type ProductsJSON struct {
+// 	ID       int    `json:"id"`
+// 	Name     string `json:"name"`
+// 	Price    int    `json:"price"`
+// 	Quantity int    `json:"quantity"`
 // }
+
+type Expected struct {
+	ID      int
+	Message string
+}
 
 func TestAddProduct(t *testing.T) {
 
@@ -35,6 +36,10 @@ func TestAddProduct(t *testing.T) {
 	produkTest := NewProductController(Dependencies{ProductORM: MockInterface})
 
 	var id = 1
+	exp := Expected{
+		ID:      1,
+		Message: "Product is inserted",
+	}
 
 	produk1 := models.Products{
 		ID:       1,
@@ -52,19 +57,19 @@ func TestAddProduct(t *testing.T) {
 	// }
 	// `)
 
-	testProduct := ProductsJSON{ID: 1, Name: "New Product", Price: 1500000, Quantity: 34}
-	resultProduk, err := json.Marshal(testProduct)
+	// testProduct := ProductsJSON{ID: 1, Name: "New Product", Price: 1500000, Quantity: 34}
+	resultProduk, err := json.Marshal(produk1)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	MockInterface.EXPECT().CreateProduct(testProduct).Return(id)
+	MockInterface.EXPECT().CreateProduct(produk1).Return(id)
 
 	result, _ := produkTest.AddProduct(resultProduk)
-	fmt.Println(testProduct)
+	fmt.Println(produk1)
 	fmt.Println(result)
 
-	// assert.Equal(t, testProduct, result)
+	assert.Equal(t, result, exp)
 
 }
