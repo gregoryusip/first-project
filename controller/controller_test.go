@@ -10,8 +10,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/gregoryusip/first-project/mocks"
 	"github.com/gregoryusip/first-project/models"
-	"github.com/magiconair/properties/assert"
 	"github.com/mitchellh/mapstructure"
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 type Expected struct {
@@ -33,90 +33,42 @@ func TestAddProduct(t *testing.T) {
 
 	var id = 1
 
-	// EXPECTATION RESULT
-	expected := Expected{
-		ID:      1,
-		Message: "Product is inserted",
-	}
-	fmt.Printf("Expected Result for the Test: %v\n", expected)
-
-	// expected := []Expected{
-	// 	{
-	// 		ID:      1,
-	// 		Message: "Product is inserted",
-	// 	},
-	// 	{
-	// 		ID:      20,
-	// 		Message: "Product is inserted",
-	// 	},
-	// }
-
-	// PRODUCT TEST
-	// productTest := []models.Products{
-	// 	{
-	// 		ID:       1,
-	// 		Name:     "New Product",
-	// 		Price:    15000000,
-	// 		Quantity: 34,
-	// 	},
-	// 	{
-	// 		ID:       2,
-	// 		Name:     "New Product 2",
-	// 		Price:    240000,
-	// 		Quantity: 90,
-	// 	},
-	// }
-
-	productTest := models.Products{
-		ID:       1,
-		Name:     "New Product",
-		Price:    15000000,
-		Quantity: 34,
-	}
-	fmt.Printf("Product Models that being to be Tested: %v\n", productTest)
-
-	// CONVERT PRODUCT STRUCT into JSON.RawMessage
-	fmt.Println("Convert the Product Models into json.RawMessage type")
-	cvtProduct, err := json.Marshal(productTest)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Printf("Product Models in json.RawMessage type: %v\n", cvtProduct)
-
-	// EXPECTED FUNCTION
-	MockInterface.EXPECT().CreateProduct(productTest).Return(id)
-
-	// CONVERT INTERFACE into STRUCT
-	fmt.Println("Convert the Result with Interface Type into Struct type")
-	resultProductInterface, _ := productControllerTest.AddProduct(cvtProduct)
-	resultProductExpected := Expected{}
-	mapstructure.Decode(resultProductInterface, &resultProductExpected)
-	fmt.Printf("Result Product in Struct type: %v\n", resultProductExpected)
-
-	// EQUAL RESULT with EXPECTED
-	fmt.Print("Success to Compare the Result with the Expected Result\n\n")
-	assert.Equal(t, resultProductExpected, expected)
-
-	// RETURN ERROR FOR UNIT TEST
-	expectedError := Expected{
-		ID:      20,
-		Message: "Product is inserted",
-	}
-	fmt.Printf("Expected Error Result for the Test: %v\n\n", expectedError)
-
-	cvtProduct, err = json.Marshal(productTest)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	MockInterface.EXPECT().CreateProduct(productTest).Return(id)
-
-	resultProductInterfaceError, _ := productControllerTest.AddProduct(cvtProduct)
-	resultProductExpectedError := Expected{}
-	mapstructure.Decode(resultProductInterfaceError, &resultProductExpectedError)
-
-	assert.Equal(t, resultProductExpectedError, expectedError)
-	fmt.Print("Fail to Compare the Result with the Expected Result\n\n")
+	Convey("Create Product Models to be Tested", t, func() {
+		productTest := models.Products{
+			ID:       1,
+			Name:     "New Product",
+			Price:    1500000,
+			Quantity: 34,
+		}
+		Convey("Convert Product Models into json.RawMessage Type", func() {
+			cvtProduct, err := json.Marshal(productTest)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			Convey("Call Mock Function with Product Models as a Parameters", func() {
+				MockInterface.EXPECT().CreateProduct(productTest).Return(id)
+				Convey("Convert the Result with Interface Type into Struct Type", func() {
+					resultProductInterface, _ := productControllerTest.AddProduct(cvtProduct)
+					resultProductExpected := Expected{}
+					mapstructure.Decode(resultProductInterface, &resultProductExpected)
+					Convey("Success Compare the Result with the Expected Result", func() {
+						expected := Expected{
+							ID:      1,
+							Message: "Product is inserted",
+						}
+						So(resultProductExpected, ShouldResemble, expected)
+					})
+					Convey("Fail Compare the Result with the Expected Result", func() {
+						expectedError := Expected{
+							ID:      20,
+							Message: "Product is inserted",
+						}
+						So(resultProductExpected, ShouldResemble, expectedError)
+					})
+				})
+			})
+		})
+	})
 
 }
