@@ -97,28 +97,22 @@ func TestAddProduct(t *testing.T) {
 	fmt.Sprintln("Success to Compare the Result with the Expected Result")
 
 	// RETURN ERROR FOR UNIT TEST
-	expected2 := Expected{
+	expectedError := Expected{
 		ID:      20,
 		Message: "Product is inserted",
 	}
-	productTest2 := models.Products{
-		ID:       1,
-		Name:     "New Product",
-		Price:    15000000,
-		Quantity: 34,
-	}
-	cvtProduct2, err := json.Marshal(productTest2)
+	cvtProduct, err = json.Marshal(productTest)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	MockInterface.EXPECT().CreateProduct(productTest2).Return(id)
+	MockInterface.EXPECT().CreateProduct(productTest).Return(id)
 
-	resultProductInterface2, _ := productControllerTest.AddProduct(cvtProduct2)
-	resultProductExpected2 := Expected{}
-	mapstructure.Decode(resultProductInterface2, &resultProductExpected2)
+	resultProductInterfaceError, _ := productControllerTest.AddProduct(cvtProduct)
+	resultProductExpectedError := Expected{}
+	mapstructure.Decode(resultProductInterfaceError, &resultProductExpectedError)
 
-	assert.Equal(t, resultProductExpected2, expected2)
+	assert.Equal(t, resultProductExpectedError, expectedError)
 	fmt.Sprintln("Fail to Compare the Result with the Expected Result")
 
 }
