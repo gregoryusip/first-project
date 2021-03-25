@@ -38,6 +38,7 @@ func TestAddProduct(t *testing.T) {
 		ID:      1,
 		Message: "Product is inserted",
 	}
+	fmt.Sprintln("Expected Result for the Test")
 
 	// expected := []Expected{
 	// 	{
@@ -72,6 +73,7 @@ func TestAddProduct(t *testing.T) {
 		Price:    15000000,
 		Quantity: 34,
 	}
+	fmt.Sprintln("Product Models that being to be Tested")
 
 	// CONVERT PRODUCT STRUCT into JSON.RawMessage
 	cvtProduct, err := json.Marshal(productTest)
@@ -79,6 +81,7 @@ func TestAddProduct(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
+	fmt.Sprintln("Convert the Product Models into json.RawMessage type")
 
 	// EXPECTED FUNCTION
 	MockInterface.EXPECT().CreateProduct(productTest).Return(id)
@@ -87,9 +90,11 @@ func TestAddProduct(t *testing.T) {
 	resultProductInterface, _ := productControllerTest.AddProduct(cvtProduct)
 	resultProductExpected := Expected{}
 	mapstructure.Decode(resultProductInterface, &resultProductExpected)
+	fmt.Sprintln("Convert the Result with Interface Type into Struct type")
 
 	// EQUAL RESULT with EXPECTED
 	assert.Equal(t, resultProductExpected, expected)
+	fmt.Sprintln("Success to Compare the Result with the Expected Result")
 
 	// RETURN ERROR FOR UNIT TEST
 	expected2 := Expected{
@@ -114,5 +119,6 @@ func TestAddProduct(t *testing.T) {
 	mapstructure.Decode(resultProductInterface2, &resultProductExpected2)
 
 	assert.Equal(t, resultProductExpected2, expected2)
+	fmt.Sprintln("Fail to Compare the Result with the Expected Result")
 
 }
