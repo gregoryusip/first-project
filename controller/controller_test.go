@@ -38,7 +38,7 @@ func TestAddProduct(t *testing.T) {
 		ID:      1,
 		Message: "Product is inserted",
 	}
-	fmt.Sprintln("Expected Result for the Test")
+	fmt.Printf("Expected Result for the Test: %v\n", expected)
 
 	// expected := []Expected{
 	// 	{
@@ -73,34 +73,38 @@ func TestAddProduct(t *testing.T) {
 		Price:    15000000,
 		Quantity: 34,
 	}
-	fmt.Sprintln("Product Models that being to be Tested")
+	fmt.Printf("Product Models that being to be Tested: %v\n", productTest)
 
 	// CONVERT PRODUCT STRUCT into JSON.RawMessage
+	fmt.Println("Convert the Product Models into json.RawMessage type")
 	cvtProduct, err := json.Marshal(productTest)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Sprintln("Convert the Product Models into json.RawMessage type")
+	fmt.Printf("Product Models in json.RawMessage type: %v\n", cvtProduct)
 
 	// EXPECTED FUNCTION
 	MockInterface.EXPECT().CreateProduct(productTest).Return(id)
 
 	// CONVERT INTERFACE into STRUCT
+	fmt.Println("Convert the Result with Interface Type into Struct type")
 	resultProductInterface, _ := productControllerTest.AddProduct(cvtProduct)
 	resultProductExpected := Expected{}
 	mapstructure.Decode(resultProductInterface, &resultProductExpected)
-	fmt.Sprintln("Convert the Result with Interface Type into Struct type")
+	fmt.Printf("Result Product in Struct type: %v\n", resultProductExpected)
 
 	// EQUAL RESULT with EXPECTED
+	fmt.Print("Success to Compare the Result with the Expected Result\n\n")
 	assert.Equal(t, resultProductExpected, expected)
-	fmt.Sprintln("Success to Compare the Result with the Expected Result")
 
 	// RETURN ERROR FOR UNIT TEST
 	expectedError := Expected{
 		ID:      20,
 		Message: "Product is inserted",
 	}
+	fmt.Printf("Expected Error Result for the Test: %v\n\n", expectedError)
+
 	cvtProduct, err = json.Marshal(productTest)
 	if err != nil {
 		fmt.Println(err)
@@ -113,6 +117,6 @@ func TestAddProduct(t *testing.T) {
 	mapstructure.Decode(resultProductInterfaceError, &resultProductExpectedError)
 
 	assert.Equal(t, resultProductExpectedError, expectedError)
-	fmt.Sprintln("Fail to Compare the Result with the Expected Result")
+	fmt.Print("Fail to Compare the Result with the Expected Result\n\n")
 
 }
