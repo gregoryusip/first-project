@@ -49,7 +49,7 @@ func TestAddProduct(t *testing.T) {
 			Convey("Call Mock Function with Product Models as a Parameters", func() {
 				MockInterface.EXPECT().CreateProduct(productTest).Return(id)
 				Convey("Convert the Result with Interface Type into Struct Type", func() {
-					resultProductInterface, _ := productControllerTest.AddProduct(cvtProduct)
+					resultProductInterface, errExp := productControllerTest.AddProduct(cvtProduct)
 					resultProductExpected := Expected{}
 					mapstructure.Decode(resultProductInterface, &resultProductExpected)
 					Convey("Success Compare the Result with the Expected Result", func() {
@@ -57,14 +57,11 @@ func TestAddProduct(t *testing.T) {
 							ID:      1,
 							Message: "Product is inserted",
 						}
+						So(errExp, ShouldBeNil)
 						So(resultProductExpected, ShouldResemble, expected)
 					})
-					Convey("Fail Compare the Result with the Expected Result", func() {
-						expectedError := Expected{
-							ID:      20,
-							Message: "Product is inserted",
-						}
-						So(resultProductExpected, ShouldResemble, expectedError)
+					Convey("Error Test When Pass the Empty Product Models", func() {
+						So(resultProductExpected, ShouldNotBeNil)
 					})
 				})
 			})
