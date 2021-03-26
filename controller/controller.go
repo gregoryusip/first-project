@@ -67,7 +67,6 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 		return nil, err
 	}
 
-	// KENDALA: passing data ke models.ProductModel.CreateProduct(...)
 	// insertID := models.ProductModel.CreateProduct(produk)
 	insertID := p.ProductORM.CreateProduct(models.Products(*produk))
 

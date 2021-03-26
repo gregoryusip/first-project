@@ -31,7 +31,7 @@ func TestAddProduct(t *testing.T) {
 	// INJECT MOCK INTERFACE into PRODUCT CONTROLLER
 	productControllerTest := NewProductController(Dependencies{ProductORM: MockInterface})
 
-	var id = 1
+	// var id = 1
 
 	Convey("Create Product Models to be Tested", t, func() {
 		productTest := models.Products{
@@ -47,7 +47,7 @@ func TestAddProduct(t *testing.T) {
 				return
 			}
 			Convey("Call Mock Function with Product Models as a Parameters", func() {
-				MockInterface.EXPECT().CreateProduct(productTest).Return(id)
+				MockInterface.EXPECT().CreateProduct(productTest).Return(productTest.ID)
 				Convey("Convert the Result with Interface Type into Struct Type", func() {
 					resultProductInterface, errExp := productControllerTest.AddProduct(cvtProduct)
 					resultProductExpected := Expected{}
@@ -57,14 +57,33 @@ func TestAddProduct(t *testing.T) {
 							ID:      1,
 							Message: "Product is inserted",
 						}
+
 						So(errExp, ShouldBeNil)
 						So(resultProductExpected, ShouldResemble, expected)
 					})
 					Convey("Error Test When Pass the Empty Product Models", func() {
-						So(resultProductExpected, ShouldNotBeNil)
+						productTest2 := models.Products{}
+						cvtProduct2, err := json.Marshal(productTest2)
+						if err != nil {
+							fmt.Println(err)
+							// cvtProduct2 = nil
+							return
+						}
+						MockInterface.EXPECT().CreateProduct(productTest2).Return(productTest.ID)
+						resultProductInterface2, errExp2 := productControllerTest.AddProduct(cvtProduct2)
+						resultProductExpected2 := Expected{}
+						mapstructure.Decode(resultProductInterface2, &resultProductExpected2)
+
+						var expectedError int
+						if resultProductExpected2.ID == 0 && errExp2 == nil {
+							expectedError = 1
+						}
+
+						So(expectedError, ShouldNotBeNil)
 					})
 				})
 			})
+
 		})
 	})
 
