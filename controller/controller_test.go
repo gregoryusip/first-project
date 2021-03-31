@@ -33,7 +33,7 @@ func TestAddProduct(t *testing.T) {
 
 	// var id = 1
 
-	Convey("Create Product Models to be Tested", t, func() {
+	Convey("When Call Add Method, First Thing is Create The Product Models Test", t, func() {
 		productTest := models.Products{
 			ID:       1,
 			Name:     "New Product",
@@ -75,11 +75,12 @@ func TestAddProduct(t *testing.T) {
 						mapstructure.Decode(resultProductInterface2, &resultProductExpected2)
 
 						var expectedError int
-						if resultProductExpected2.ID == 0 && errExp2 == nil {
+						if resultProductExpected2.ID == 1 && errExp2 == nil {
 							expectedError = 1
 						}
-
+						fmt.Println(expectedError)
 						So(expectedError, ShouldNotBeNil)
+
 					})
 				})
 			})

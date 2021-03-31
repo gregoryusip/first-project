@@ -3,10 +3,12 @@
 package models
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 
+	"github.com/gregoryusip/first-project/config/database"
 	_ "github.com/lib/pq"
 )
 
@@ -43,7 +45,23 @@ func NewProductModel(deps Dependencies) ProductModel {
 // }
 
 type ProductRepository struct {
-	Db *sql.DB
+	Db  *sql.DB
+	Db2 database.Ormer
+}
+
+func (p *ProductRepository) CreateProductPG(ctx context.Context, produk Products) ([]Products, error) {
+
+	sqlStatement := `INSERT INTO products (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
+
+	var id int
+
+	err := p.Db.QueryRow(sqlStatement, produk.Name, produk.Price, produk.Quantity).Scan(&id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return p.ReadProductPG(ctx)
 }
 
 func (p *ProductRepository) CreateProduct(produk Products) int {
@@ -61,6 +79,24 @@ func (p *ProductRepository) CreateProduct(produk Products) int {
 	// fmt.Printf("Insert data single record %d", id)
 
 	return id
+}
+
+func (p *ProductRepository) ReadProductPG(ctx context.Context) ([]Products, error) {
+	var products []Products
+
+	sqlStatement := fmt.Sprintf(`
+		SELECT
+			*
+		FROM
+			products
+	`)
+
+	_, err := p.Db2.QueryContext(ctx, &products, sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
 
 func (p *ProductRepository) ReadProduct() ([]Products, error) {
@@ -92,6 +128,25 @@ func (p *ProductRepository) ReadProduct() ([]Products, error) {
 	return products, err
 }
 
+func (p *ProductRepository) UpdateProductPG(ctx context.Context, name string, produk Products) ([]Products, error) {
+
+	sqlStatement := `UPDATE products SET name=$1, price=$2, quantity=$3 WHERE name=$1`
+
+	res, err := p.Db.Exec(sqlStatement, name, produk.Price, produk.Quantity)
+	if err != nil {
+		return nil, err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("Total rows/record to update %v\n", rowsAffected)
+
+	return p.ReadProductPG(ctx)
+}
+
 func (p *ProductRepository) UpdateProduct(name string, produk Products) int64 {
 
 	sqlStatement := `UPDATE products SET name=$1, price=$2, quantity=$3 WHERE name=$1`
@@ -111,6 +166,18 @@ func (p *ProductRepository) UpdateProduct(name string, produk Products) int64 {
 	fmt.Printf("Total rows/record to update %v\n", rowsAffected)
 
 	return rowsAffected
+}
+
+func (p *ProductRepository) DeleteProductPG(ctx context.Context, name string) error {
+
+	sqlStatement := fmt.Sprintf(`DELETE FROM products WHERE name = '%s'`, name)
+
+	_, err := p.Db2.ExecContext(ctx, sqlStatement)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (p *ProductRepository) DeleteProduct(name string) int64 {
