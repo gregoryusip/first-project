@@ -130,19 +130,12 @@ func (p *ProductRepository) ReadProduct() ([]Products, error) {
 
 func (p *ProductRepository) UpdateProductPG(ctx context.Context, name string, produk Products) ([]Products, error) {
 
-	sqlStatement := `UPDATE products SET name=$1, price=$2, quantity=$3 WHERE name=$1`
+	sqlStatement := fmt.Sprintf(`UPDATE products SET name='%s', price='%d', quantity='%d' WHERE name='%s'`, produk.Name, produk.Price, produk.Quantity, produk.Name)
 
-	res, err := p.Db.Exec(sqlStatement, name, produk.Price, produk.Quantity)
+	_, err := p.Db2.ExecContext(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
 	}
-
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return nil, err
-	}
-
-	fmt.Printf("Total rows/record to update %v\n", rowsAffected)
 
 	return p.ReadProductPG(ctx)
 }
