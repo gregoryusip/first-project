@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/go-pg/pg"
 	"github.com/gregoryusip/first-project/config/database"
 	_ "github.com/lib/pq"
 )
@@ -34,13 +35,14 @@ type ProductModel interface {
 }
 
 type Dependencies struct {
-	Db *sql.DB
-	// Db *pg.DB
+	Db   *sql.DB
+	DbPg *pg.DB
 }
 
 func NewProductModel(deps Dependencies) ProductModel {
 	return &ProductRepository{
-		Db: deps.Db,
+		DbPg: deps.DbPg,
+		// Db: deps.Db,
 	}
 }
 
@@ -49,25 +51,10 @@ func NewProductModel(deps Dependencies) ProductModel {
 // }
 
 type ProductRepository struct {
-	Db *sql.DB
-	// Db  *pg.DB
-	Db2 database.Ormer
+	Db   *sql.DB
+	DbPg *pg.DB
+	Db2  database.Ormer
 }
-
-// func (p *ProductRepository) CreateProductPG(ctx context.Context, produk Products) ([]Products, error) {
-
-// 	sqlStatement := `INSERT INTO products (name, price, quantity) VALUES ($1, $2, $3) RETURNING id`
-
-// 	var id int
-
-// 	err := p.Db.QueryRow(sqlStatement, produk.Name, produk.Price, produk.Quantity).Scan(&id)
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return p.ReadProductPG()
-// }
 
 func (p *ProductRepository) CreateProductPG(produk Products) ([]Products, error) {
 
@@ -76,6 +63,7 @@ func (p *ProductRepository) CreateProductPG(produk Products) ([]Products, error)
 	// var id int
 
 	// err := p.Db.QueryRow(sqlStatement, produk.Name, produk.Price, produk.Quantity).Scan(&id)
+	// _, err := p.Db2.Model(&produk).TableExpr("products").Insert()
 	_, err := p.Db2.Model(&produk).TableExpr("products").Insert()
 
 	if err != nil {
@@ -102,25 +90,6 @@ func (p *ProductRepository) CreateProduct(produk Products) int {
 	return id
 }
 
-// func (p *ProductRepository) ReadProductPG(ctx context.Context) ([]Products, error) {
-// 	var products []Products
-
-// 	sqlStatement := fmt.Sprintf(`
-// 		SELECT
-// 			*
-// 		FROM
-// 			products
-// 	`)
-
-// 	_, err := p.Db2.QueryContext(ctx, &products, sqlStatement)
-// 	// err := p.Db2.Model()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return products, nil
-// }
-
 func (p *ProductRepository) ReadProductPG() ([]Products, error) {
 	var products []Products
 
@@ -132,7 +101,7 @@ func (p *ProductRepository) ReadProductPG() ([]Products, error) {
 	// `)
 
 	// _, err := p.Db2.QueryContext(ctx, &products, sqlStatement)
-	err := p.Db2.Model(&products).Select()
+	err := p.DbPg.Model(&products).Select()
 	if err != nil {
 		return nil, err
 	}
@@ -169,18 +138,6 @@ func (p *ProductRepository) ReadProduct() ([]Products, error) {
 	return products, err
 }
 
-// func (p *ProductRepository) UpdateProductPG(ctx context.Context, name string, produk Products) ([]Products, error) {
-
-// 	sqlStatement := fmt.Sprintf(`UPDATE products SET name='%s', price='%d', quantity='%d' WHERE name='%s'`, produk.Name, produk.Price, produk.Quantity, produk.Name)
-
-// 	_, err := p.Db2.ExecContext(ctx, sqlStatement)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return p.ReadProductPG()
-// }
-
 func (p *ProductRepository) UpdateProductPG(name string, produk Products) ([]Products, error) {
 
 	// sqlStatement := fmt.Sprintf(`UPDATE products SET name='%s', price='%d', quantity='%d' WHERE name='%s'`, produk.Name, produk.Price, produk.Quantity, produk.Name)
@@ -215,18 +172,6 @@ func (p *ProductRepository) UpdateProduct(name string, produk Products) int64 {
 
 	return rowsAffected
 }
-
-// func (p *ProductRepository) DeleteProductPG(ctx context.Context, name string) error {
-
-// 	sqlStatement := fmt.Sprintf(`DELETE FROM products WHERE name = '%s'`, name)
-
-// 	_, err := p.Db2.ExecContext(ctx, sqlStatement)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
 
 func (p *ProductRepository) DeleteProductPG(name string) error {
 	var products []Products

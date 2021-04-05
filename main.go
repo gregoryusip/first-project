@@ -11,8 +11,8 @@ import (
 func main() {
 	// DATABASE CONNECTION
 	// db := config.CreateConnection()
-	db := config.CreateConnection("../first-project")
-	// db := config.CreateConnectionPG()
+	// db := config.CreateConnection("../first-project")
+	db := config.CreateConnectionPG()
 
 	// config, err := config.LoadConfig(".")
 	// if err != nil {
@@ -28,7 +28,8 @@ func main() {
 
 	// SINGLETON
 	productORM := models.NewProductModel(models.Dependencies{
-		Db: db,
+		// Db: db,
+		DbPg: db,
 	})
 
 	productController := controller.NewProductController(controller.Dependencies{
