@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/go-pg/pg"
 	"github.com/spf13/viper"
 )
 
@@ -35,6 +36,24 @@ func LoadConfig(path string) (config Config, err error) {
 		log.Fatal("cannot decode into struct:", err)
 	}
 	return
+}
+
+func CreateConnectionPG() *pg.DB {
+	address := fmt.Sprintf("%s:%s", "localhost", "5432")
+	options := &pg.Options{
+		User:     "postgres",
+		Password: "mysecret",
+		Addr:     address,
+		Database: "postgres",
+		PoolSize: 50,
+	}
+
+	con := pg.Connect(options)
+	if con == nil {
+		log.Fatal("Cannot connect to postgres")
+	}
+
+	return con
 }
 
 func CreateConnection(path string) *sql.DB {

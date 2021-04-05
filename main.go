@@ -12,6 +12,7 @@ func main() {
 	// DATABASE CONNECTION
 	// db := config.CreateConnection()
 	db := config.CreateConnection("../first-project")
+	// db := config.CreateConnectionPG()
 
 	// config, err := config.LoadConfig(".")
 	// if err != nil {

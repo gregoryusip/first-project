@@ -69,6 +69,7 @@ func (p *ProductRepository) AddProduct(params json.RawMessage) (interface{}, *jr
 
 	// insertID := models.ProductModel.CreateProduct(produk)
 	insertID := p.ProductORM.CreateProduct(models.Products(*produk))
+	// _, err := p.ProductORM.CreateProductPG("Testing", models.Products(*produk))
 
 	res := response{
 		ID:      insertID,
