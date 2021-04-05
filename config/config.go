@@ -39,12 +39,12 @@ func LoadConfig(path string) (config Config, err error) {
 }
 
 func CreateConnectionPG() *pg.DB {
-	address := fmt.Sprintf("%s:%s", "localhost", "5432")
+	address := fmt.Sprintf("%s:%s", "localhost", "8080")
 	options := &pg.Options{
 		User:     "postgres",
 		Password: "mysecret",
 		Addr:     address,
-		Database: "postgres",
+		Database: "first_project_db",
 		PoolSize: 50,
 	}
 

@@ -64,7 +64,7 @@ func (p *ProductRepository) CreateProductPG(produk Products) ([]Products, error)
 
 	// err := p.Db.QueryRow(sqlStatement, produk.Name, produk.Price, produk.Quantity).Scan(&id)
 	// _, err := p.Db2.Model(&produk).TableExpr("products").Insert()
-	_, err := p.Db2.Model(&produk).TableExpr("products").Insert()
+	_, err := p.DbPg.Model(&produk).TableExpr("products").Insert()
 
 	if err != nil {
 		return nil, err
@@ -143,7 +143,7 @@ func (p *ProductRepository) UpdateProductPG(name string, produk Products) ([]Pro
 	// sqlStatement := fmt.Sprintf(`UPDATE products SET name='%s', price='%d', quantity='%d' WHERE name='%s'`, produk.Name, produk.Price, produk.Quantity, produk.Name)
 
 	// _, err := p.Db2.ExecContext(ctx, sqlStatement)
-	_, err := p.Db2.Model(&produk).TableExpr("products").Where("name = ?", name).Update()
+	_, err := p.DbPg.Model(&produk).TableExpr("products").Where("name = ?", name).Update()
 
 	if err != nil {
 		return nil, err
